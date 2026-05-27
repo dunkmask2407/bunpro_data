@@ -468,7 +468,7 @@ def build_entry(row, data):
     # }
     # structure finale de à_propos
     a_propos = {
-        'explication': (
+        'en': (
             data.get('à_propos', [None])[0]
             if data.get('à_propos')
             else ''
