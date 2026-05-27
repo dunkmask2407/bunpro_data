@@ -1,0 +1,75 @@
+ajouter un champ comment au rapport => controller
+
+https://fr.aliexpress.com/item/1005010711171107.html?spm=a2g0o.productlist.main.1.5f9fHxtrHxtrg8&algo_pvid=597d248b-3c37-4ebc-9c31-4fbdc0a01b17&algo_exp_id=597d248b-3c37-4ebc-9c31-4fbdc0a01b17-0&pdp_ext_f=%7B%22order%22%3A%22123%22%2C%22spu_best_type%22%3A%22price%22%2C%22eval%22%3A%221%22%2C%22fromPage%22%3A%22search%22%7D&pdp_npi=6%40dis%21XOF%211855%211707%21%21%2120.00%2118.40%21%400b1bf20a17790963825686183ed0bb%2112000053269710688%21sea%21BJ%210%21ABX%211%210%21n_tag%3A-29910%3Bd%3A2b4468c9%3Bm03_new_user%3A-29895&curPageLogUid=9aJXZMkdhoRG&utparam-url=scene%3Asearch%7Cquery_from%3A%7Cx_object_id%3A1005010711171107%7C_p_origin_prod%3A
+
+invisible holder charger cable with stand type c to type c
+
+https://fr.aliexpress.com/item/1005011559605757.html?spm=a2g0o.productlist.main.24.37e1wjQKwjQKH7&aem_p4p_detail=202605180231457558132103260810001423611&algo_pvid=20bcb609-3d99-49bd-84c9-5ab0d6dbd0e3&algo_exp_id=20bcb609-3d99-49bd-84c9-5ab0d6dbd0e3-23&pdp_ext_f=%7B%22order%22%3A%22212%22%2C%22eval%22%3A%221%22%2C%22fromPage%22%3A%22search%22%7D&pdp_npi=6%40dis%21XOF%213154%211577%21%21%2134.00%2117.00%21%40212e532617790967054892329eee05%2112000056807752508%21sea%21BJ%210%21ABX%211%210%21n_tag%3A-29910%3Bd%3A2b4468c9%3Bm03_new_user%3A-29895&curPageLogUid=x7z9fd3rtoqo&utparam-url=scene%3Asearch%7Cquery_from%3A%7Cx_object_id%3A1005011559605757%7C_p_origin_prod%3A&search_p4p_id=202605180231457558132103260810001423611_6
+
+https://fr.aliexpress.com/item/1005012235712323.html?spm=a2g0o.productlist.main.3.3e36yZ6EyZ6EzR&algo_pvid=9ad60a9f-a729-4cf2-8770-fbe0559926b4&algo_exp_id=9ad60a9f-a729-4cf2-8770-fbe0559926b4-2&pdp_ext_f=%7B%22order%22%3A%22-1%22%2C%22eval%22%3A%221%22%2C%22fromPage%22%3A%22search%22%7D&pdp_npi=6%40dis%21XOF%212249%211575%21%21%2124.24%2116.97%21%40212e520d17790969154795917eef73%2112000057816655611%21sea%21BJ%210%21ABX%211%210%21n_tag%3A-29910%3Bd%3A2b4468c9%3Bm03_new_user%3A-29895&curPageLogUid=NCtNRIjOn4Qs&utparam-url=scene%3Asearch%7Cquery_from%3A%7Cx_object_id%3A1005012235712323%7C_p_origin_prod%3A
+
+grammaire:
+N5 : 132
+N4 : 185
+N3 : 220
+N2 : 221
+N1 : 187
+hors jlpt : 13 + 21 = 34
+
+vocabulaire
+N5 : 1100
+N4 : 1096
+N3 : 1998
+N2 : 1998
+N1 : 2974
+
+ la liste structurée des 132 points de grammaire N5 avec leurs URLs
+je peux avoir la la liste structure avec leurs URLs pour ce lien avec la traduction francaise, anglaise et japonaise qui reuni  la description complete de chaque point de chaque lecon de grammaire allant du n5 au n1 pour finir par hors jlpt en csv bien structurée
+https://bunpro.jp/fr/grammar_points 
+https://bunpro.jp/fr/grammar_points/%E3%81%A0
+
+peux tu m'extraire tout le code source de ce site allant de la description complete de chaque onomatope (811 items sur 14 pages) de chaque chapiter (66 en tout)?
+https://bunpro.jp/decks/onoma/onomatopoeia
+https://bunpro.jp/fr/vocabs/%E3%81%82%E3%81%92%E3%81%BF%E3%81%96%E3%82%8F?deck_id=46
+
+peux tu m'extraire tout le code source de ce site allant de la description complete de chaque point de chaque lecon de grammaire ? https://bunpro.jp/decks/cgwh1b/bunpro-n3-grammar https://bunpro.jp/fr/grammar_points/%E3%81%A0?deck_id=1
+
+peux tu m'extraire tout le code source de ce site allant de la description complete de chaque point (979 items si je ne me trompe) de chaque lecon (1 a 10) de grammaire allant du n5 au n1 pour finir par hors jlpt ?
+https://bunpro.jp/fr/grammar_points
+https://bunpro.jp/fr/grammar_points/%E3%81%A0
+https://bunpro.jp/decks/nn10ai/bunpro-n5-grammar
+https://bunpro.jp/decks/m7omkx/bunpro-n4-grammar
+https://bunpro.jp/decks/cgwh1b/bunpro-n3-grammar
+https://bunpro.jp/decks/a5gf35/bunpro-n2-grammar
+https://bunpro.jp/decks/lzqrdc/bunpro-n1-grammar
+https://bunpro.jp/fr/grammar_points/%E3%81%A0?deck_id=1
+
+peux tu m'extraire tout le code source de ce site allant de la description complete de chaque point (9166 items si je ne me trompe) de chaque lecon de vocabulaire allant du n5 au n1 ?
+https://bunpro.jp/decks/resqiy/bunpro-n5-vocab =>22 lessons 1100
+https://bunpro.jp/decks/lh0vxb/bunpro-n4-vocab =>22 lessons
+https://bunpro.jp/decks/mvt76c/bunpro-n3-vocab =>27 lessons
+https://bunpro.jp/decks/dxbsvk/bunpro-n2-vocab =>20 lessons
+https://bunpro.jp/decks/qqovik/bunpro-n1-vocab =>30 lessons
+https://bunpro.jp/fr/vocabs/%E7%A7%81?deck_id=5
+
+peux tu m'extraire tout le code source de ce site allant de chaque chapitre de みんなの日本語 I [Grammar] (118 items si je ne me trompe) et みんなの日本語 I I [Grammar] (92 items si je ne me trompe)? ici pas besoin de la descriptions complete de chaque items. en plus de ce que renvoi chacune de ces pages, j'ai plus besoin de ce genre d'informations sur chaque items (N5 Leçon 1: 2/12 みんなの日本語 I [Grammar])
+https://bunpro.jp/decks/9fzdtl/i-grammar
+https://bunpro.jp/decks/6jgltv/i-i-grammar
+
+allant de chaque point de chaque lecon (1 a 10) de grammaire allant du n5 au n1 pour finir par hors jlpt
+
+la liste de tout les 811 items sur 14 pages des onomatopees avec leur descriptions respective un peu comme celui ci: https://bunpro.jp/fr/vocabs/%E3%81%82%E3%81%92%E3%81%BF%E3%81%96%E3%82%8F?deck_id=46 tu peux me donner le resultat sous forme html ou csv a toi de voir ce qui est plus propre et plus complet (ce qui te convient le mieux)
+
+---
+
+hors-jlpt: lesson 1 = 13 et lesson 2 = 21
+voici la liste des particules que j'ai trouver sur https://bunpro.jp/fr/grammar_points 
+que les points de grammaire soient organiser telle qu'elle (comme dans l'ordre defini dans la suite des images contenu dans le fichier zip ci-joint) apres je ferai la reorganisation
+
+connecte toi avec ces identifiants
+email: alexandro.dev24@gmail.com
+mp: @zerty24
+
+continue s'il te plait
+
+pour chaque expression de vocabulaire (1100 au total, ex: https://bunpro.jp/fr/vocabs/%E7%A7%81?deck_id=5) de chaque lecon (22 lecons au total) de ce lien: https://bunpro.jp/decks/resqiy/bunpro-n5-vocab, donne moi le contenu des sections Définition du dictionnaire, Détails et Exemples. juste le contenu textuel
