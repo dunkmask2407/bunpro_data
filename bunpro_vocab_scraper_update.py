@@ -16,6 +16,7 @@ INSTALLATION :
 """
 
 import json, os, re, sys, time
+from urllib.parse import unquote
 import requests
 from bs4 import BeautifulSoup, NavigableString, Tag
 from playwright.sync_api import sync_playwright, TimeoutError as PWTimeout
@@ -208,6 +209,65 @@ def parse_pitch_accent_from_soup(soup):
 
     return items
 
+# def parse_bunpro_summary_from_soup(soup):
+#     """
+#     Extrait les deux versions de Bunpro Summary depuis les <aside>.
+#     Retourne {"en": "explication principale", "jp": "explication japonaise"}.
+#     """
+#     result = {'en': '', 'jp': ''}
+#     asides = soup.find_all('aside')
+#     summaries = []
+#     for aside in asides:
+#         h3 = aside.find('h3')
+#         if not h3: continue
+#         h3_text = h3.get_text(strip=True)
+#         if 'Bunpro' not in h3_text and 'Synthèse' not in h3_text: continue
+#         p = aside.find('p', attrs={'data-force-furigana': True})
+#         if p:
+#             summaries.append(p.get_text(strip=True))
+#     if len(summaries) >= 1: result['en'] = summaries[0]
+#     if len(summaries) >= 2: result['jp'] = summaries[1]
+#     return result
+
+def parse_bunpro_summary_from_soup(soup):
+    """
+    Extrait les deux Bunpro Summary.
+    Détecte le JP par présence de balises <ruby> dans le <p> (avant process_ruby).
+    Retourne {"en": "...", "jp": "..."}.
+    """
+    result = {'en': '', 'jp': ''}
+    asides = soup.find_all('aside')
+    for aside in asides:
+        h3 = aside.find('h3')
+        if not h3: continue
+        if 'Bunpro' not in h3.get_text() and 'Synthèse' not in h3.get_text(): continue
+        p = aside.find('p', attrs={'data-force-furigana': True})
+        if not p: continue
+        is_jp = bool(p.find('ruby'))   # présence de ruby = version japonaise
+        # Convertir les ruby de ce <p> uniquement pour l'extraction
+        text = ''
+        for child in p.children:
+            if isinstance(child, NavigableString):
+                text += str(child)
+            elif isinstance(child, Tag):
+                if child.name == 'ruby':
+                    base, furi = '', ''
+                    for n in child.children:
+                        if isinstance(n, NavigableString): base += str(n)
+                        elif isinstance(n, Tag):
+                            if n.name == 'rt': furi = n.get_text(strip=True)
+                            elif n.name not in ('rp',): base += n.get_text()
+                    b = base.strip()
+                    text += f"{b}({furi})" if (b and furi) else base
+                else:
+                    text += child.get_text()
+        text = text.strip()
+        if is_jp:
+            result['jp'] = text
+        else:
+            result['en'] = text
+    return result
+
 # ancien => prend en compte q'une forme de definition
 # def parse_definitions_from_soup(soup):
 #     """
@@ -358,7 +418,8 @@ def get_vocab_urls(deck_url):
         lesson = '?'
         for tag in soup.find_all(True):
             txt = tag.get_text(strip=True)
-            if re.match(r'^Lesson\s+\d+', txt, re.I) and tag.name in ('h1','h2','h3','h4','div','span','p'):
+            if re.match(r'^(Lesson|Chapter)\s+\d+', txt, re.I) and tag.name in ('h1','h2','h3','h4','div','span','p'):
+            # if re.match(r'^Lesson\s+\d+', txt, re.I) and tag.name in ('h1','h2','h3','h4','div','span','p'):
                 if len(list(tag.children)) <= 3: lesson = txt.strip()
             elif tag.name == 'a' and tag.get('href','').startswith('/vocabs/'):
                 entries.append((lesson, BASE + tag['href'], tag.get_text(' ', strip=True)))
@@ -516,6 +577,16 @@ def parse_vocab_page(url):
 
 def parse_vocab_requests(url):
     soup = BeautifulSoup(get(url).text, 'html.parser')
+    bunpro_summary = parse_bunpro_summary_from_soup(soup)
+    # Fallback JP : second appel vers /fr/ si jp vide
+    if not bunpro_summary['jp']:
+        fr_url = re.sub(r'bunpro\.jp/(en/)?vocabs/', 'bunpro.jp/fr/vocabs/', url)
+        if fr_url != url:
+            try:
+                soup_fr = BeautifulSoup(get(fr_url).text, 'html.parser')
+                bs2 = parse_bunpro_summary_from_soup(soup_fr)
+                bunpro_summary['jp'] = bs2.get('jp', '')
+            except: pass
     process_ruby(soup)
 
     # ── Extraction DOM (AVANT décomposition des balises) ─────────────────
@@ -548,7 +619,8 @@ def parse_vocab_requests(url):
         'mot':     parsed.get('mot', ''),
         'lecture': parsed.get('lecture', ''),
         'dictionary_definition': {
-            'bunpro_summary': parsed.get('bunpro_summary', ''),
+            'bunpro_summary': bunpro_summary,
+            # 'bunpro_summary': parsed.get('bunpro_summary', ''),
             'all_forms':      parsed.get('all_forms', ''),
             'definitions':    definitions,
         },
@@ -589,9 +661,23 @@ def parse_vocab_playwright(pw_page, url):
     try:
         html      = pw_page.content()
         soup_pw   = BeautifulSoup(html, 'html.parser')
+        bunpro_summary = parse_bunpro_summary_from_soup(soup_pw)
+        # Fallback JP : cliquer le bouton translate de l'aside
+        if not bunpro_summary['jp']:
+            try:
+                pw_page.locator('aside header button').first.click()
+                pw_page.wait_for_timeout(400)
+                soup_jp = BeautifulSoup(pw_page.content(), 'html.parser')
+                bs2 = parse_bunpro_summary_from_soup(soup_jp)
+                bunpro_summary['jp'] = bs2.get('jp', '') or bs2.get('en', '')
+                pw_page.locator('aside header button').first.click()  # revenir à l'original
+                pw_page.wait_for_timeout(200)
+            except: pass
+            
         process_ruby(soup_pw)
         pitch_items = parse_pitch_accent_from_soup(soup_pw)
         definitions = parse_definitions_from_soup(soup_pw)
+        
     except:
         pitch_items = []
         definitions = []
@@ -680,7 +766,8 @@ def parse_vocab_playwright(pw_page, url):
         'mot':     parsed.get('mot', ''),
         'lecture': parsed.get('lecture', ''),
         'dictionary_definition': {
-            'bunpro_summary': parsed.get('bunpro_summary', ''),
+            'bunpro_summary': bunpro_summary,
+            # 'bunpro_summary': parsed.get('bunpro_summary', ''),
             'all_forms':      parsed.get('all_forms', ''),
             'definitions':    definitions,
         },
