@@ -229,14 +229,29 @@ EXTRACT_DOM_JS = """() => {
                      .map(e => e.innerText.trim()).filter(Boolean);
       const noteEl = li.querySelector('p.text-extra-small [data-force-furigana], p.text-tertiary-fg span[data-force-furigana]');
       grp.push({
+        fr:           enEl.innerText.trim(),
         jp:           jpEl.innerText.trim(),
-        en:           enEl.innerText.trim(),
+        fr_highlight: enHl,
         jp_highlight: jpHl,
-        en_highlight: enHl,
         note:         noteEl ? noteEl.innerText.trim() : '',
       });
     });
     if (grp.length) res.à_propos_groupes.push(grp);
+  });
+  
+  // ── Texte JP du à_propos ─────────────────────────────────────────────
+  document.querySelectorAll('section').forEach(_sec => {
+    if (res['à_propos_jp']) return;
+    const _hdr = _sec.querySelector('header[id="about"]');
+    if (!_hdr) return;
+    const _jpP = [..._hdr.querySelectorAll('p')].find(
+      p => ['Japonais','Japanese'].includes(p.innerText.trim())
+        && p.className.includes('text-primary-accent')
+    );
+    if (_jpP) {
+      const _body = _sec.querySelector('.bp-writeup-body.prose');
+      if (_body) res['à_propos_jp'] = _body.innerText.trim();
+    }
   });
 
   return res;
@@ -371,7 +386,7 @@ def parse_text_sections(text):
 # SCRAPING D'UNE PAGE
 # ══════════════════════════════════════════════════════════════════════════════
 
-def scrape_page(pw_page, url):
+def scrape_page(pw_page, url, url_en=''):
     # res = {
     #     'structure_standard':'', 'structure_poli':'',
     #     'détails':{}, 'à_propos':'',
@@ -398,6 +413,7 @@ def scrape_page(pw_page, url):
 
     try:
         dom = pw_page.evaluate(EXTRACT_DOM_JS) or {}
+        res['à_propos_jp']= dom.get('à_propos_jp', '')
         res['détails']    = dom.get('détails',   {})
         res['exemples']   = dom.get('exemples',  [])
         res['en_ligne']   = dom.get('en_ligne',  [])
@@ -417,6 +433,21 @@ def scrape_page(pw_page, url):
     try:
         res.update(parse_text_sections(pw_page.inner_text('body')))
     except: pass
+    
+    # ── Texte EN du à_propos ──────────────────────────────────────────
+    if url_en and url_en != url:
+      try:
+          pw_page.goto(url_en, wait_until='networkidle', timeout=TIMEOUT)
+          inject(pw_page)
+          pw_page.wait_for_timeout(400)
+          # Texte principal EN
+          en_sec = parse_text_sections(pw_page.inner_text('body'))
+          res['à_propos_en'] = en_sec.get('à_propos', '')
+          # Exemples EN
+          en_dom = pw_page.evaluate(EXTRACT_DOM_JS) or {}
+          for _n, _grp in enumerate(en_dom.get('à_propos_groupes', []), start=1):
+              res[f'à_propos_en{_n}'] = _grp
+      except: pass
     
     try:
         # Label depuis DOM
@@ -467,23 +498,47 @@ def build_entry(row, data):
     #     'hors_ligne':         data.get('hors_ligne',[]),
     # }
     # structure finale de à_propos
+    # a_propos = {
+    #     'en': (
+    #         data.get('à_propos', [None])[0]
+    #         if data.get('à_propos')
+    #         else ''
+    #     )
+    # }
+    # APRÈS
     a_propos = {
-        'en': (
-            data.get('à_propos', [None])[0]
-            if data.get('à_propos')
-            else ''
-        )
+        'fr': data.get('à_propos', [''])[0] if data.get('à_propos') else '',
+        'en': data.get('à_propos_en', ''),
+        'jp': data.get('à_propos_jp', ''),
     }
     
     # récupérer les à_propos1, à_propos2...
-    for k, v in data.items():
+    # for k, v in data.items():
 
-        if k.startswith('à_propos') and k != 'à_propos':
+    #     if k.startswith('à_propos') and k != 'à_propos':
 
-            suffixe = k.replace('à_propos', '')
-            new_key = f'à_propos_exemples_{suffixe}'
+    #         suffixe = k.replace('à_propos', '')
+    #         new_key = f'à_propos_exemples_{suffixe}'
 
-            a_propos[new_key] = v
+    #         a_propos[new_key] = v
+    _n = 1
+    while data.get(f'à_propos{_n}') is not None:
+        grp_fr = data[f'à_propos{_n}']
+        grp_en = data.get(f'à_propos_en{_n}', [])
+        merged = []
+        for _i, item_fr in enumerate(grp_fr):
+            item_en = grp_en[_i] if _i < len(grp_en) else {}
+            merged.append({
+                'fr':           item_fr.get('fr', ''),
+                'en':           item_en.get('fr', ''),  # page EN → clé "fr" = texte EN
+                'jp':           item_fr.get('jp', ''),
+                'fr_highlight': item_fr.get('fr_highlight', []),
+                'en_highlight': item_en.get('fr_highlight', []),
+                'jp_highlight': item_fr.get('jp_highlight', []),
+                'note':         item_fr.get('note', ''),
+            })
+        a_propos[f'à_propos_exemples_{_n}'] = merged
+        _n += 1
     # a_propos_ex = []
     
     entry = {
@@ -604,7 +659,8 @@ def main():
                 output[niveau][cl].append(e); err_count += 1
             else:
                 try:
-                    data = scrape_page(page, url_fr)
+                    url_en_str = row.get('URL_EN', '').strip()
+                    data = scrape_page(page, url_fr, url_en=url_en_str)
                     e    = build_entry(row, data)
                     output[niveau][cl].append(e)
                     n_ex   = len(data.get('exemples',[]))
